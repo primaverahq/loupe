@@ -60,6 +60,10 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
         fun onScaleChange(scaleFactor: Float, focusX: Float, focusY: Float)
     }
 
+    interface OnViewClickListener {
+        fun onClick(view: ImageView)
+    }
+
     // max zoom(> 1f)
     var maxZoom = DEFAULT_MAX_ZOOM
     // use fling gesture for dismiss
@@ -86,6 +90,8 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
     var onViewTranslateListener: OnViewTranslateListener? = null
     // on scale changed
     var onScaleChangedListener: OnScaleChangedListener? = null
+
+    var onViewClickListener: OnViewClickListener? = null
 
     var dismissAnimationInterpolator: Interpolator = DEFAULT_INTERPOLATOR
 
@@ -217,6 +223,13 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
                 } else {
                     zoomInToTargetScale(e)
                 }
+                return true
+            }
+
+            override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+                e ?: return false
+
+                onViewClickListener?.onClick(imageView)
                 return true
             }
         }
