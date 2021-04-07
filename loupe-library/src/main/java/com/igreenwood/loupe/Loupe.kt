@@ -493,6 +493,8 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
         val startTop = bitmapBounds.top
         val endLeft = canvasBounds.centerX() - imageWidth * minScale * 0.5f
         val endTop = canvasBounds.centerY() - imageHeight * minScale * 0.5f
+        val focalX = canvasBounds.centerX()
+        val focalY = canvasBounds.centerY()
         ValueAnimator.ofFloat(0f, 1f).apply {
             duration = if (isOverScaling) {
                 overScaleAnimationDuration
@@ -509,6 +511,7 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
                 scale = lerp(value, startScale, endScale)
                 val newLeft = lerp(value, startLeft, endLeft)
                 val newTop = lerp(value, startTop, endTop)
+                onScaleChangedListener?.onScaleChange(scale / minScale, focalX, focalY)
                 calcBounds()
                 bitmapBounds.offsetTo(newLeft, newTop)
                 constrainBitmapBounds()
@@ -692,7 +695,7 @@ class Loupe(imageView: ImageView, container: ViewGroup) : View.OnTouchListener,
         calcBounds()
         // offset to focalPoint
         offsetToZoomFocalPoint(focalX, focalY, lastBounds, bitmapBounds)
-        onScaleChangedListener?.onScaleChange(targetScale, focalX, focalY)
+        onScaleChangedListener?.onScaleChange(targetScale / minScale, focalX, focalY)
     }
 
     private fun setTransform() {
